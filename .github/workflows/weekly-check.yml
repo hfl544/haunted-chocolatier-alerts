@@ -18,6 +18,21 @@ jobs:
       - name: Hent repository
         uses: actions/checkout@v4
 
+
+
+      - name: TEST Telegram-besked
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl --fail --silent --show-error \
+            --request POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=🍫 Test: Din Haunted Chocolatier-bot kan sende Telegram-beskeder!"
+
+
+
       - name: Kør Python-bot
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
