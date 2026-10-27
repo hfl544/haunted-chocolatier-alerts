@@ -1,0 +1,35 @@
+
+name: Haunted Chocolatier Blog Checker
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+      timezone: "Europe/Copenhagen"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-blog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hent repository
+        uses: actions/checkout@v4
+
+      - name: Kør Python-bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python haunted_chocolatier.py
+
+      - name: Gem seneste indlæg
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add last_post.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update last checked blog post"
+            git push
+          fi
